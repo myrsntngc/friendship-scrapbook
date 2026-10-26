@@ -1,0 +1,311 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Selfie With... | Friendship Scrapbook</title>
+
+    <style>
+        body {
+            background: #fff1f3;
+            font-family: Georgia, serif;
+            color: #633b46;
+            text-align: center;
+            padding: 15px;
+            margin: 0;
+        }
+
+        .header {
+            background: #ffe0e6;
+            border: 2px dashed #b76e79;
+            border-radius: 18px;
+            padding: 18px 10px;
+            box-shadow: 4px 4px 0 #e8c4ca;
+            margin: 15px auto 25px;
+            max-width: 650px;
+        }
+
+        .header h1 {
+            margin: 5px;
+            font-size: 30px;
+        }
+
+        .header p {
+            margin-bottom: 0;
+        }
+
+        .bingo-card {
+            background: #fffaf0;
+            border: 2px dashed #d9a6ad;
+            border-radius: 18px;
+            padding: 12px;
+            max-width: 650px;
+            margin: auto;
+            box-shadow: 5px 5px 0 #efd6d9;
+        }
+
+        .bingo-title {
+            background: #f5d3d9;
+            border-radius: 12px;
+            padding: 15px 5px;
+            margin-bottom: 12px;
+        }
+
+        .bingo-title h2 {
+            font-size: 27px;
+            margin: 0;
+        }
+
+        .bingo-title p {
+            font-size: 13px;
+            margin-bottom: 0;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 6px;
+        }
+
+        .tile {
+            min-width: 0;
+            aspect-ratio: 1 / 1.15;
+            background: #ffe9ed;
+            border: 1px solid #d9a6ad;
+            border-radius: 9px;
+            padding: 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+
+        .tile .prompt {
+            font-size: clamp(8px, 1.9vw, 12px);
+            line-height: 1.25;
+            padding: 4px 0;
+            overflow-wrap: anywhere;
+        }
+
+        .tile .picture {
+            width: 100%;
+            flex: 1;
+            min-height: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 25px;
+            overflow: hidden;
+        }
+
+        .tile img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+
+        .tile.done {
+            background: #e6efdf;
+            border: 2px solid #829c75;
+        }
+
+        .tile.done .prompt::after {
+            content: " ✓";
+            color: #54754a;
+            font-weight: bold;
+        }
+
+        .instructions {
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        button, .upload-button {
+            background: #b76e79;
+            color: white;
+            border: none;
+            padding: 10px 14px;
+            border-radius: 9px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .footer {
+            padding: 20px;
+            font-style: italic;
+        }
+
+        @media (max-width: 420px) {
+            body { padding: 6px; }
+            .bingo-card { padding: 6px; }
+            .grid { gap: 3px; }
+            .tile { padding: 2px; }
+            .header h1 { font-size: 24px; }
+            .bingo-title h2 { font-size: 22px; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        <div>🎀 ✿ 📸 ✿ 💌</div>
+        <h1>Our Little Friendship Scrapbook</h1>
+        <p>Little moments, silly selfies, forever memories. 💗</p>
+    </div>
+
+    <div class="bingo-card">
+
+        <div class="bingo-title">
+            <h2>📸 SELFIE WITH... 📸</h2>
+            <p>Complete the challenges and capture the memories!</p>
+        </div>
+
+        <p class="instructions">
+            Tap a box to select it, then upload a selfie to replace its picture.
+            Tap a box again to mark your challenge complete! ♡
+        </p>
+
+        <div class="grid" id="selfieGrid"></div>
+
+        <div>
+            <label class="upload-button" for="photoUpload">
+                📷 Upload a selfie
+            </label>
+            <input type="file" id="photoUpload" accept="image/*">
+
+            <button onclick="resetCard()">Reset card</button>
+        </div>
+
+        <p class="instructions">
+            💌 Each box is a different memory to make with your friends.
+        </p>
+    </div>
+
+    <div class="footer">
+        ♡ made with friendship, laughter, and love ♡
+    </div>
+
+    <script>
+        const challenges = [
+            "Selfie with your best friend",
+            "Selfie with someone who owns pink",
+            "Selfie with your funniest friend",
+            "Selfie with a peace sign",
+            "Selfie with everyone together",
+            "Selfie with someone taller than you",
+            "Selfie with matching poses",
+            "Selfie with a big smile",
+            "Selfie with someone you just met",
+            "Selfie with a heart pose",
+            "Selfie with your closest friend",
+            "Selfie with someone wearing black",
+            "FREE SPACE 💗",
+            "Selfie making a silly face",
+            "Selfie with your group leader",
+            "Selfie with someone who makes you laugh",
+            "Selfie with matching accessories",
+            "Selfie with your favorite person here",
+            "Selfie with a thumbs-up",
+            "Selfie with your bag",
+            "Selfie with a peace sign ✌️",
+            "Selfie with someone born in your month",
+            "Selfie with your arms making a heart",
+            "Selfie with your rant buddy",
+            "Selfie to remember today"
+        ];
+
+        const grid = document.getElementById("selfieGrid");
+        const photoUpload = document.getElementById("photoUpload");
+        let selectedTile = null;
+
+        function createCard() {
+            grid.innerHTML = "";
+            selectedTile = null;
+
+            challenges.forEach((challenge, index) => {
+                const tile = document.createElement("div");
+                tile.className = "tile";
+                tile.dataset.index = index;
+
+                const picture = document.createElement("div");
+                picture.className = "picture";
+                picture.textContent = index === 12 ? "💗" : "📷";
+
+                const prompt = document.createElement("div");
+                prompt.className = "prompt";
+                prompt.textContent = challenge;
+
+                tile.appendChild(picture);
+                tile.appendChild(prompt);
+
+                tile.addEventListener("click", () => {
+                    if (selectedTile) {
+                        selectedTile.style.outline = "";
+                    }
+
+                    selectedTile = tile;
+                    tile.style.outline = "3px solid #b76e79";
+
+                    if (tile.classList.contains("done")) {
+                        tile.classList.remove("done");
+                    } else {
+                        tile.classList.add("done");
+                    }
+                });
+
+                grid.appendChild(tile);
+            });
+        }
+
+        photoUpload.addEventListener("change", () => {
+            if (!selectedTile) {
+                alert("Tap a box first so you can choose where to put your selfie!");
+                photoUpload.value = "";
+                return;
+            }
+
+            const file = photoUpload.files[0];
+            if (!file) return;
+
+            if (!file.type.startsWith("image/")) {
+                alert("Please choose an image file.");
+                photoUpload.value = "";
+                return;
+            }
+
+            const reader = new FileReader();
+
+            reader.onload = event => {
+                const picture = selectedTile.querySelector(".picture");
+                const img = document.createElement("img");
+                img.src = event.target.result;
+                img.alt = "Uploaded selfie";
+
+                picture.replaceChildren(img);
+                selectedTile.classList.add("done");
+                selectedTile.style.outline = "";
+                selectedTile = null;
+            };
+
+            reader.readAsDataURL(file);
+            photoUpload.value = "";
+        });
+
+        function resetCard() {
+            createCard();
+        }
+
+        createCard();
+    </script>
+
+</body>
+</html>
